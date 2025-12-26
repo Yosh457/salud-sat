@@ -42,7 +42,19 @@ const Ticket = {
         const sql = `SELECT * FROM tickets WHERE id = ?`;
         const [rows] = await db.query(sql, [id]);
         return rows[0];
+    },
+
+    // Actualizar un ticket
+    update: async (id, data) => {
+        const { estado, tecnico_id, prioridad, categoria } = data;
+        const sql = `
+            UPDATE tickets 
+            SET estado = ?, tecnico_id = ?, prioridad = ?, categoria = ?
+            WHERE id = ?
+        `;
+        const [result] = await db.query(sql, [estado, tecnico_id, prioridad, categoria, id]);
+        return result;
     }
-};
+}; // Cierre del objeto Ticket
 
 module.exports = Ticket;

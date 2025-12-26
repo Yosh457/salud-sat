@@ -12,4 +12,10 @@ router.post('/', ticketController.crearTicket);
 // GET /api/tickets -> Listar tickets (con filtro automático por rol)
 router.get('/', ticketController.listarTickets);
 
+// GET /api/tickets/:id -> Ver detalle
+router.get('/:id', ticketController.obtenerTicket);
+
+// PUT /api/tickets/:id -> Actualizar (Asignar, Cerrar, Cambiar prioridad)
+router.put('/:id', ticketController.actualizarTicket);
+
 module.exports = router;
