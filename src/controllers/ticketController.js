@@ -1,6 +1,6 @@
 const { getIo } = require('../services/socketService');
 const Ticket = require('../models/ticketModel');
-// const TicketEvidence = require('../models/ticketEvidenceModel');
+const TicketEvidence = require('../models/ticketEvidenceModel');
 
 const crearTicket = async (req, res, next) => {
     try {
@@ -130,14 +130,19 @@ const subirEvidencia = async (req, res, next) => {
             throw error;
         }
 
-        // Aquí guardaremos la ruta en la base de datos (Tabla ticket_evidencias)
-        // Por ahora, solo devolvemos la respuesta para probar que sube
-        // await TicketEvidence.create({ ticket_id: id, filename: file.filename, path: file.path });
+        // Guadar referencia en la base de datos
+        const evidenciaId = await TicketEvidence.create({
+            ticket_id: id,
+            nombre_archivo: file.filename, // El nombre único generado (UUID)
+            ruta_archivo: `/uploads/evidence/${file.filename}`, // Ruta web pública
+            tipo_mime: file.mimetype
+        });
 
         res.status(201).json({
             status: 'success',
-            message: 'Archivo subido correctamente',
-            file: {
+            message: 'Evidencia guardada exitosamente',
+            data: {
+                id: evidenciaId,
                 filename: file.filename,
                 path: `/uploads/evidence/${file.filename}`
             }
@@ -148,4 +153,14 @@ const subirEvidencia = async (req, res, next) => {
     }
 };
 
-module.exports = { crearTicket, listarTickets, obtenerTicket, actualizarTicket, subirEvidencia };
+const listarEvidencias = async (req, res, next) => {
+    try {
+        const { id } = req.params; // ID del ticket
+        const evidencias = await TicketEvidence.findByTicketId(id);
+        res.json({ status: 'success', data: evidencias });
+    } catch (error) {
+        next(error);
+    }
+};
+
+module.exports = { crearTicket, listarTickets, obtenerTicket, actualizarTicket, subirEvidencia, listarEvidencias };

@@ -22,4 +22,7 @@ router.put('/:id', ticketController.actualizarTicket);
 // POST /api/tickets/:id/evidencia
 router.post('/:id/evidencia', upload.single('evidencia'), ticketController.subirEvidencia);
 
+// GET /api/tickets/:id/evidencia -> Ver lista de archivos
+router.get('/:id/evidencia', ticketController.listarEvidencias);
+
 module.exports = router;
