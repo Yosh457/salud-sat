@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const ticketController = require('../controllers/ticketController');
 const { verificarToken } = require('../middlewares/authMiddleware');
+const upload = require('../services/storageService');
 
 // Todas las rutas de tickets requieren autenticación
 router.use(verificarToken);
@@ -17,5 +18,8 @@ router.get('/:id', ticketController.obtenerTicket);
 
 // PUT /api/tickets/:id -> Actualizar (Asignar, Cerrar, Cambiar prioridad)
 router.put('/:id', ticketController.actualizarTicket);
+
+// POST /api/tickets/:id/evidencia
+router.post('/:id/evidencia', upload.single('evidencia'), ticketController.subirEvidencia);
 
 module.exports = router;

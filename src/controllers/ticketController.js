@@ -1,5 +1,6 @@
 const { getIo } = require('../services/socketService');
 const Ticket = require('../models/ticketModel');
+// const TicketEvidence = require('../models/ticketEvidenceModel');
 
 const crearTicket = async (req, res, next) => {
     try {
@@ -118,4 +119,33 @@ const actualizarTicket = async (req, res, next) => {
     }
 };
 
-module.exports = { crearTicket, listarTickets, obtenerTicket, actualizarTicket };
+const subirEvidencia = async (req, res, next) => {
+    try {
+        const { id } = req.params; // ID del Ticket
+        const file = req.file;     // El archivo viene aquí gracias a Multer
+
+        if (!file) {
+            const error = new Error('No se subió ningún archivo');
+            error.statusCode = 400;
+            throw error;
+        }
+
+        // Aquí guardaremos la ruta en la base de datos (Tabla ticket_evidencias)
+        // Por ahora, solo devolvemos la respuesta para probar que sube
+        // await TicketEvidence.create({ ticket_id: id, filename: file.filename, path: file.path });
+
+        res.status(201).json({
+            status: 'success',
+            message: 'Archivo subido correctamente',
+            file: {
+                filename: file.filename,
+                path: `/uploads/evidence/${file.filename}`
+            }
+        });
+
+    } catch (error) {
+        next(error);
+    }
+};
+
+module.exports = { crearTicket, listarTickets, obtenerTicket, actualizarTicket, subirEvidencia };

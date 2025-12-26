@@ -10,6 +10,7 @@ const app = express();
 // Middlewares globales
 app.use(cors());
 app.use(express.json());
+app.use('/uploads', express.static('uploads'));
 
 // Ruta de prueba
 app.get('/', (req, res) => {
