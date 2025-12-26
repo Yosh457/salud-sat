@@ -1,3 +1,4 @@
+const { getIo } = require('../services/socketService');
 const Ticket = require('../models/ticketModel');
 
 const crearTicket = async (req, res, next) => {
@@ -11,6 +12,14 @@ const crearTicket = async (req, res, next) => {
             descripcion, 
             prioridad, 
             categoria
+        });
+        // Notificar en tiempo real a técnicos/admins conectados
+        // 'nuevo_ticket' es el nombre del evento que escucharán en el frontend
+        getIo().emit('nuevo_ticket', { 
+            id: nuevoId, 
+            titulo, 
+            prioridad,
+            mensaje: '¡Nuevo ticket ingresado!'
         });
 
         res.status(201).json({ 
