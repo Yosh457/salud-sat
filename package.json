@@ -1,5 +1,5 @@
 {
-  "name": "salud-sat",
+  "name": "salud-sat-backend",
   "version": "1.0.0",
   "description": "Backend para el Sistema de Asistencia Técnica (SAT) - Salud Alto Hospicio",
   "main": "index.js",
