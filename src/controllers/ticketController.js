@@ -98,6 +98,12 @@ const actualizarTicket = async (req, res, next) => {
             throw error;
         }
 
+        if (req.user.rol === 'funcionario') {
+            const error = new Error('No tienes permisos para gestionar tickets');
+            error.statusCode = 403;
+            throw error;
+        }
+
         // 2. Preparar cambios
         const cambios = {
             prioridad: prioridad || ticketActual.prioridad,
@@ -132,12 +138,12 @@ const actualizarTicket = async (req, res, next) => {
                 // Solo enviamos si el técnico existe y tiene email
                 if (tecnicoNuevo && tecnicoNuevo.email) {
                     console.log(`📧 Intentando notificar a técnico: ${tecnicoNuevo.email}`);
-                    await emailService.notificarAsignacion(
+                    emailService.notificarAsignacion(
                         tecnicoNuevo.email,
                         tecnicoNuevo.nombre_completo,
                         id,
                         ticketActual.titulo
-                    );
+                    ).catch(console.error); // Capturamos errores de envío aquí
                 } else {
                     console.warn(`⚠️ No se pudo notificar: Técnico ID ${cambios.tecnico_id} no tiene email o no existe.`);
                 }
@@ -147,12 +153,12 @@ const actualizarTicket = async (req, res, next) => {
             if (cambios.estado === 'resuelto' && ticketActual.estado !== 'resuelto') {
                 if (ticketActual.autor_email) {
                     console.log(`📧 Intentando notificar a funcionario: ${ticketActual.autor_email}`);
-                    await emailService.notificarResolucion(
+                    emailService.notificarResolucion(
                         ticketActual.autor_email,
                         ticketActual.autor,
                         id,
                         ticketActual.titulo
-                    );
+                    ).catch(console.error); // Capturamos errores de envío aquí
                 } else {
                     console.warn(`⚠️ No se pudo notificar resolución: El autor del ticket no tiene email registrado.`);
                 }
